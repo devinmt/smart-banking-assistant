@@ -45,10 +45,10 @@ cd banking-assistant
 pip install streamlit sentence-transformers faiss-cpu requests
 ```
 
-3. Install Ollama and Llama 2:
+3. Install Ollama and Llama 3.1:
 ```bash
 # Install Ollama from: https://ollama.ai/
-ollama pull llama2
+ollama pull llama3.1
 ```
 
 ### Running the Application
@@ -131,18 +131,6 @@ response = assistant.query("What are the different types of mortgages?")
 - [ ] Enhance vector search capabilities
 - [ ] Add more banking knowledge
 - [ ] Implement A/B testing framework
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 📚 References
 
