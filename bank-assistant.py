@@ -3,9 +3,10 @@ import json
 from typing import List, Dict, Tuple, Optional
 from datetime import datetime
 import requests
-from sentence_transformers import SentenceTransformer
-import faiss
 import logging
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 # Basic logging configuration
 logging.basicConfig(
@@ -15,23 +16,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class VectorStore:
-    """Vector database for semantic search of banking information"""
+    """Vector database using TF-IDF and cosine similarity"""
     
     def __init__(self):
-        try:
-            self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
-            self.dimension = 384
-            self.index = faiss.IndexFlatL2(self.dimension)
-            self.documents = []
-            
-            self._load_banking_knowledge()
-        except Exception as e:
-            logger.error(f"Error initializing VectorStore: {str(e)}")
-            st.error("Error initializing search functionality. Some features may be limited.")
-    
-    def _load_banking_knowledge(self):
-        """Load comprehensive banking documentation"""
-        banking_docs = [
+        self.vectorizer = TfidfVectorizer(stop_words='english')
+        self.documents = [
             # Account Types
             "Checking accounts are transactional accounts used for daily banking needs like paying bills and making purchases",
             "Savings accounts earn interest on deposited money and are best for building emergency funds",
@@ -45,8 +34,6 @@ class VectorStore:
             "Personal loans provide fixed-amount borrowing with regular monthly payments",
             "Home equity lines of credit (HELOCs) let you borrow against your home's equity",
             "Mortgages are long-term loans used to finance home purchases with various term options",
-            "Auto loans help finance vehicle purchases with the car serving as collateral",
-            "Student loans help finance education expenses with federal and private options available",
             
             # Banking Services
             "Online banking provides 24/7 access to accounts through web browsers",
@@ -54,7 +41,6 @@ class VectorStore:
             "Bill pay services automate regular payments to service providers",
             "Direct deposit enables automatic deposit of paychecks into your account",
             "Wire transfers send money electronically between banks domestically or internationally",
-            "ATM services provide cash withdrawals, deposits, and account information access",
             
             # Security Features
             "Two-factor authentication adds an extra layer of security to account access",
@@ -63,93 +49,34 @@ class VectorStore:
             "Secure messaging allows safe communication with bank representatives",
             "Account alerts notify you about balance changes and suspicious activity",
             
-            # Financial Planning
-            "Budgeting tools help track income and expenses for better financial management",
-            "Goal-based savings accounts help you save for specific purposes",
-            "Investment accounts allow you to invest in stocks, bonds, and mutual funds",
-            "Retirement planning services help prepare for long-term financial security",
-            "Financial advisors provide personalized guidance on money management",
-            
-            # Fees and Charges
-            "Monthly maintenance fees may apply to certain checking accounts",
-            "Overdraft fees are charged when accounts are overdrawn",
-            "ATM fees may apply when using out-of-network machines",
-            "Wire transfer fees vary for domestic and international transfers",
-            "Late payment fees apply to missed credit card or loan payments",
-            
-            # Digital Features
-            "Mobile check deposit allows depositing checks through smartphone cameras",
-            "Peer-to-peer payments enable sending money to friends and family",
-            "Digital wallets support contactless payments using smartphones",
-            "Online bill negotiation services help reduce monthly bills",
-            "Automated savings tools round up purchases to save spare change",
-            
-            # Credit Building
-            "Credit monitoring services track your credit score and report changes",
-            "Secured credit products help establish credit history",
-            "Credit building loans help improve credit scores over time",
-            "Payment history reporting helps build positive credit records",
-            "Credit limit increases are available with good payment history",
-            
-            # Business Banking
-            "Business checking accounts support company transactions and payments",
-            "Merchant services enable businesses to accept card payments",
-            "Business loans provide capital for company growth and expenses",
-            "Payroll services help manage employee compensation",
-            "Business credit cards separate personal and company expenses",
-            
-            # Insurance Products
-            "Life insurance policies protect family financial security",
-            "Property insurance covers damage to homes and belongings",
-            "Auto insurance provides vehicle accident coverage",
-            "Identity theft insurance protects against fraud losses",
-            "Travel insurance covers trip cancellations and emergencies",
-            
-            # Additional Services
-            "Notary services authenticate important documents",
-            "Safe deposit boxes store valuable items securely",
-            "Foreign currency exchange for international travel",
-            "Cashier's checks provide guaranteed payment for large transactions",
-            "Money orders offer secure payment alternatives to cash",
-            
-            # Financial Education
-            "Financial literacy resources teach money management basics",
-            "Investment education explains market and portfolio concepts",
-            "Credit score education helps understand credit reporting",
-            "Debt management guidance helps reduce and eliminate debt",
-            "Retirement planning workshops prepare for future needs",
-            
-            # Digital Security
-            "Encryption protects online and mobile banking data",
-            "Biometric authentication uses fingerprints or face recognition",
-            "Regular security updates protect against new threats",
-            "Secure password requirements protect account access",
-            "Multi-device authentication verifies login attempts"
+            # Additional common banking topics
+            "Overdraft protection helps prevent declined transactions when your balance is low",
+            "Mobile deposit limits vary based on account type and history",
+            "ATM networks provide convenient access to cash worldwide",
+            "Digital wallets enable contactless payments using your phone",
+            "Auto-pay features help ensure bills are paid on time"
         ]
-        
-        # Encode and index documents
-        embeddings = self.encoder.encode(banking_docs)
-        self.index.add(embeddings.astype('float32'))
-        self.documents.extend(banking_docs)
-
-        
-        # Encode and index documents
-        embeddings = self.encoder.encode(banking_docs)
-        self.index.add(embeddings.astype('float32'))
-        self.documents.extend(banking_docs)
+        self.tfidf_matrix = self.vectorizer.fit_transform(self.documents)
     
     def search(self, query: str, k: int = 3) -> List[str]:
-        """Search for relevant banking information"""
+        """Search for relevant banking information using TF-IDF similarity"""
         try:
-            query_vector = self.encoder.encode([query])
-            scores, indices = self.index.search(query_vector.astype('float32'), k)
-            return [self.documents[i] for i in indices[0]]
+            # Transform query to TF-IDF vector
+            query_vector = self.vectorizer.transform([query])
+            
+            # Calculate similarity with all documents
+            similarities = cosine_similarity(query_vector, self.tfidf_matrix).flatten()
+            
+            # Get top k similar documents
+            top_k_indices = similarities.argsort()[-k:][::-1]
+            
+            return [self.documents[i] for i in top_k_indices]
         except Exception as e:
             logger.error(f"Search error: {str(e)}")
             return []
 
 class BankingGuardrails:
-    """Enhanced guardrails with banking-specific rules"""
+    """Banking security guardrails"""
     
     FORBIDDEN_TOPICS = [
         "account numbers",
@@ -219,7 +146,7 @@ class LlamaInterface:
             return "I apologize, but I'm having trouble generating a response at the moment. Please try again."
 
 class ConversationHistory:
-    """Simple conversation history"""
+    """Conversation history manager"""
     
     def __init__(self):
         self.history: List[Dict] = []
@@ -233,7 +160,7 @@ class ConversationHistory:
         })
 
 def main():
-    st.set_page_config(page_title="AI Banking Assistant", layout="wide")
+    st.set_page_config(page_title="Capital One AI Assistant", layout="wide")
     
     # Initialize session state
     if 'conversation' not in st.session_state:
@@ -246,7 +173,7 @@ def main():
         st.session_state.vector_store = VectorStore()
     
     # UI Components
-    st.title("🏦 Smart Bank Assistant")
+    st.title("🏦 Capital One AI Assistant")
     
     # Sidebar with capabilities
     with st.sidebar:
@@ -282,7 +209,7 @@ def main():
         
         # Generate and show response
         with st.chat_message("assistant"):
-            # Get relevant context from vector store
+            # Get relevant context
             relevant_docs = st.session_state.vector_store.search(user_input)
             
             # Generate response with context
