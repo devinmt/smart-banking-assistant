@@ -233,7 +233,7 @@ class ConversationHistory:
         })
 
 def main():
-    st.set_page_config(page_title="Capital One AI Assistant", layout="wide")
+    st.set_page_config(page_title="AI Banking Assistant", layout="wide")
     
     # Initialize session state
     if 'conversation' not in st.session_state:
@@ -246,7 +246,7 @@ def main():
         st.session_state.vector_store = VectorStore()
     
     # UI Components
-    st.title("🏦 Capital One AI Assistant")
+    st.title("🏦 Smart Bank Assistant")
     
     # Sidebar with capabilities
     with st.sidebar:
