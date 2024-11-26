@@ -1,6 +1,6 @@
-# Capital One AI Banking Assistant
+# AI Banking Assistant
 
-A sophisticated AI-powered banking assistant that leverages Llama 2 and vector search to provide accurate, secure banking information and assistance.
+A sophisticated AI-powered banking assistant that leverages Llama 3.1 and vector search to provide accurate, secure banking information and assistance.
 
 ## 🌟 Features
 
@@ -146,19 +146,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📚 References
 
-- [Llama 2](https://github.com/facebookresearch/llama)
+- [Llama 3](https://github.com/facebookresearch/llama)
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [FAISS](https://github.com/facebookresearch/faiss)
 - [Sentence Transformers](https://www.sbert.net/)
 
 ## 📧 Contact
 
-Your Name - email@example.com
+Devin Mony Thomas - devin24thomas@gmail.com
 Project Link: https://github.com/yourusername/banking-assistant
-
-## 🙏 Acknowledgments
-
-- Facebook AI Research for Llama 2
-- Sentence Transformers team
-- FAISS development team
-- Streamlit community
