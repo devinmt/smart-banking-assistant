@@ -1,145 +1,86 @@
-# AI Banking Assistant
+# Banking AI Assistant 🏦
 
-A sophisticated AI-powered banking assistant that leverages Llama 3.1 and vector search to provide accurate, secure banking information and assistance.
+A secure, AI-powered banking assistant built with Streamlit and LLM integration. This application provides general banking information, product explanations, and financial education while maintaining strict security standards.
 
-## 🌟 Features
+## Features
 
-### Core Capabilities
-- 🤖 AI-powered banking assistance using Llama 2
-- 🔍 Semantic search for banking information
-- 🛡️ Built-in security guardrails
-- 💬 Interactive chat interface
-- 🏦 Comprehensive banking knowledge base
+- Interactive chat interface for banking queries
+- Local LLM integration via Ollama
+- TF-IDF based vector search for relevant banking information
+- Built-in security guardrails for sensitive information
+- Conversation history management
+- Responsive Streamlit UI
 
-### Domain Coverage
-- Account Types & Services
-- Credit Products
-- Digital Banking
-- Security Features
-- Financial Planning
-- Fees & Charges
-- Credit Building
-- Business Banking
-- Insurance Products
-- Financial Education
+## Prerequisites
 
-## 🚀 Getting Started
+- Docker
+- Ollama (with llama3.1 model installed)
+- Python 3.9+ (if running locally)
 
-### Prerequisites
-
-```bash
-# Python 3.9+ required
-python --version
-```
-
-### Installation
+## Quick Start with Docker
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/banking-assistant.git
-cd banking-assistant
+git clone https://github.com/yourusername/banking-ai-assistant.git
+cd banking-ai-assistant
 ```
 
-2. Install required packages:
+2. Build the Docker image:
 ```bash
-pip install streamlit sentence-transformers faiss-cpu requests
+docker build -t banking-assistant .
 ```
 
-3. Install Ollama and Llama 3.1:
+3. Run the container:
 ```bash
-# Install Ollama from: https://ollama.ai/
-ollama pull llama3.1
+docker run -p 8501:8501 banking-assistant
 ```
 
-### Running the Application
+4. Access the application at `http://localhost:8501`
 
+## Local Development Setup
+
+1. Create a virtual environment:
 ```bash
-streamlit run bank_assistant.py
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-The application will be available at `http://localhost:8501`
-
-## 🏗️ Project Structure
-
-```
-banking-assistant/
-├── bank_assistant.py    # Main application file
-├── requirements.txt     # Project dependencies
-└── README.md           # Project documentation
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
-## 🔧 Components
-
-### VectorStore
-- Manages banking knowledge base
-- Implements semantic search functionality
-- Uses FAISS for efficient similarity search
-- Powered by Sentence Transformers
-
-### BankingGuardrails
-- Ensures secure and appropriate responses
-- Prevents sharing of sensitive information
-- Maintains banking compliance
-- Implements content filtering
-
-### LlamaInterface
-- Handles communication with Llama 2 model
-- Manages prompt engineering
-- Processes model responses
-- Handles error cases
-
-### ConversationHistory
-- Maintains chat history
-- Manages conversation state
-- Handles message formatting
-
-## 🛡️ Security Features
-
-- Sensitive information detection
-- Built-in content filtering
-- No storage of personal data
-- Secure conversation handling
-
-## 💡 Usage Examples
-
-```python
-# Initialize the banking assistant
-assistant = BankingAssistant()
-
-# Ask about banking products
-response = assistant.query("What types of savings accounts are available?")
-
-# Get information about credit cards
-response = assistant.query("How do credit card rewards work?")
-
-# Learn about mortgage options
-response = assistant.query("What are the different types of mortgages?")
+3. Run the application:
+```bash
+streamlit run app.py
 ```
 
-## 🚫 Limitations
+## Project Structure
 
-- Cannot access real account information
-- Cannot perform actual transactions
-- Limited to educational/informational responses
-- Requires local Llama 2 installation
+```
+banking-ai-assistant/
+├── app.py                 # Main application file
+├── Dockerfile            # Docker configuration
+├── requirements.txt      # Python dependencies
+└── README.md            # This file
+```
 
-## 🔄 Future Improvements
+## Security Features
 
-- [ ] Add multi-language support
-- [ ] Implement document upload for analysis
-- [ ] Add financial calculators
-- [ ] Enhance vector search capabilities
-- [ ] Add more banking knowledge
-- [ ] Implement A/B testing framework
+- No handling of sensitive banking information
+- Secure prompt engineering
+- Input validation and sanitization
+- Forbidden topics filtering
+- No account access or transaction capabilities
 
-## 📚 References
+## Configuration
 
-- [Llama 3](https://github.com/facebookresearch/llama)
-- [Streamlit Documentation](https://docs.streamlit.io/)
-- [FAISS](https://github.com/facebookresearch/faiss)
-- [Sentence Transformers](https://www.sbert.net/)
+The application can be configured through environment variables:
+- `STREAMLIT_SERVER_PORT`: Port for the Streamlit server (default: 8501)
+- `STREAMLIT_SERVER_ADDRESS`: Server address (default: 0.0.0.0)
 
-## 📧 Contact
 
-Devin Mony Thomas - devin24thomas@gmail.com
-Project Link: https://github.com/yourusername/banking-assistant
+
+## Disclaimer
+
+This is a demonstration project and should not be used for actual banking operations. It is intended for educational purposes only.
